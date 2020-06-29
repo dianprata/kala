@@ -1,0 +1,58 @@
+.search {
+
+ .search-song {
+
+  .title-search-song {
+   transition: margin-left 2ms;
+   display: inline-block;
+   i {
+    vertical-align: middle;
+   }
+   &:hover {
+    cursor: pointer;
+    margin-left: 10px;
+    color: rgba(var(--vs-danger), 1);
+    i {
+     color: rgba(var(--vs-danger), 1);
+    }
+   }
+  }
+ }
+
+ .data-track-row {
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-radius: 4px;
+  height: 52px;
+  position: relative;
+  -webkit-transition-duration: .15s;
+  transition-duration: .15s;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+  font-size: 14px;
+
+  &:hover {
+   background: rgba(var(--vs-light), 1);
+  }
+
+  &.play {
+   background: rgba(var(--vs-light), 1);
+   color: rgba(var(--vs-danger), 1);
+
+   i, svg {
+    color: rgba(var(--vs-danger), 1) !important;
+   }
+  }
+
+  .track-title {
+   padding-left: 1rem;
+  }
+
+  .track-album {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+  }
+ }
+}
