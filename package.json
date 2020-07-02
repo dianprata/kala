@@ -14,11 +14,15 @@
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
     "lodash": "^4.17.15",
+    "numeral": "^2.0.6",
     "register-service-worker": "^1.7.1",
+    "spotify-web-api-node": "^4.0.0",
     "vue": "^2.6.11",
+    "vue-long-click": "0.0.4",
     "vue-router": "^3.2.0",
     "vuesax": "^4.0.1-alpha.22",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "vuex-persistedstate": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.0",

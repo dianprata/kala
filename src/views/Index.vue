@@ -23,7 +23,7 @@
         </vs-button>
         <vs-button
             icon
-            dark
+            color="#fff"
             circle
             flat
             size="large"
@@ -33,10 +33,10 @@
           <i class="fa fa-moon"></i>
         </vs-button>
         <vs-button
+            icon
+            dark
             circle
             flat
-            icon
-            color="#fff"
             size="large"
             v-else
             @click="toggleTheme('light')"
@@ -68,7 +68,7 @@
           </vs-input>
           <vs-input type="password" v-model="password" placeholder="Password">
             <template #icon>
-              <i class='fa fa-lock'></i>
+              <b-icon-lock></b-icon-lock>
             </template>
           </vs-input>
           <div class="flex">
@@ -80,8 +80,12 @@
 
       <template #footer>
         <div class="footer-dialog">
-          <vs-button block dark @click="login" :disabled="email === '' || password === ''">
+          <vs-button block dark @click="login"
+                     :disabled="email === '' || password === '' || !validEmail">
             Sign In
+          </vs-button>
+          <vs-button block success @click="loginSpotify" class="mt-2">
+            <i class="fab fa-spotify mr-2"></i>Login with Spotify
           </vs-button>
 
           <div class="new">
@@ -94,6 +98,7 @@
 </template>
 
 <script>
+import querystring from 'querystring';
 
 export default {
   name: 'Index',
@@ -103,10 +108,24 @@ export default {
       email: '',
       password: '',
       remember: false,
-      theme: 'light',
     };
   },
+  watch: {
+    loginDialog() {
+      if (this.dataLs) {
+        this.email = this.dataLs.email;
+        this.password = Buffer.from(this.dataLs.password, 'base64').toString('ascii');
+        this.remember = true;
+      }
+    },
+  },
   computed: {
+    dataLs() {
+      return JSON.parse(localStorage.getItem('account'));
+    },
+    theme() {
+      return this.$store.state.theme;
+    },
     validEmail() {
       // eslint-disable-next-line no-useless-escape
       return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email);
@@ -114,29 +133,69 @@ export default {
   },
   methods: {
     login() {
-      if (this.email !== '' && this.password !== '') {
+      if (this.email !== '' && this.password !== '' && this.validEmail) {
         if (this.email === 'dev@kala.com' && this.password === 'kala123') {
           const loading = this.$vs.loading({
             type: 'scale',
             color: 'dark',
           });
           setTimeout(() => {
+            let token = '';
+            const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            // eslint-disable-next-line no-restricted-syntax,no-unused-vars
+            for (const p of possible) {
+              token += possible.charAt(Math.floor(Math.random() * possible.length));
+            }
+            this.$store.commit('SET_TOKEN', token);
             this.$router.push('/home');
             loading.close();
           }, 3000);
+          if (this.remember) {
+            this.setRemember();
+          }
         } else {
           this.$vs.notification({
             title: 'Login Failed',
             text: 'Check your email or password !',
             position: 'top-right',
-            flat: true,
+            progress: 'auto',
             color: 'danger',
           });
         }
       }
     },
+    loginSpotify() {
+      const stateKey = 'spotify_auth_state';
+      let text = '';
+      const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const loop = '111111111111111';
+      // eslint-disable-next-line no-restricted-syntax,no-unused-vars
+      for (const p of loop) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+
+      const state = text;
+      localStorage.setItem(stateKey, state);
+      const scope = 'user-read-private user-read-email';
+      window.location.replace(`https://accounts.spotify.com/authorize?${
+        querystring.stringify({
+          response_type: 'code',
+          client_id: process.env.VUE_APP_CLIENT_ID,
+          scope,
+          redirect_uri: process.env.VUE_APP_REDIRECT_URI,
+          state,
+        })}`);
+    },
+    setRemember() {
+      const data = JSON.stringify({
+        email: this.email,
+        password: Buffer.from(this.password).toString('base64'),
+        remember: true,
+      });
+      localStorage.setItem('account', data);
+    },
     toggleTheme(theme) {
-      this.theme = theme;
+      this.$store.commit('SET_THEME', theme);
       this.$vs.setTheme(theme);
     },
   },

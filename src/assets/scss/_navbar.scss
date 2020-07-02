@@ -32,6 +32,7 @@
      position: relative;
      width: 100%;
      display: block;
+     cursor: pointer;
      i {
       position: absolute;
       right: 0;
@@ -44,6 +45,9 @@
      border-radius: 5px;
      a, i, span {
       color: rgba(var(--vs-light), 1);
+     }
+     .fa-sun {
+      color: rgba(var(--vs-dark), 1);
      }
     }
    }

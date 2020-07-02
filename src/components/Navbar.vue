@@ -37,12 +37,17 @@
               </router-link>
             </li>
             <li class="account-item">
-              <router-link to="/" class="account-link">Logout</router-link>
+              <span @click="logout" class="account-link">Logout</span>
             </li>
             <hr>
             <li class="account-item">
               <span>Dark Mode</span>
-              <vs-switch v-model="darkMode" color="danger" @click="changeDarkMode" />
+              <vs-switch v-model="darkMode" color="danger" @click="changeDarkMode">
+                <template #circle>
+                  <i v-if="!darkMode" class='fa fa-sun' ></i>
+                  <i v-else class='fa fa-moon' ></i>
+                </template>
+              </vs-switch>
             </li>
           </ul>
         </div>
@@ -59,23 +64,43 @@ export default {
   data() {
     return {
       profileDropdown: false,
-      darkMode: false,
       search: '',
     };
   },
+  watch: {
+    search() {
+      this.searching();
+    },
+  },
+  computed: {
+    theme() {
+      return this.$store.state.theme;
+    },
+    darkMode() {
+      return this.$store.getters.darkMode;
+    },
+  },
   methods: {
+    logout() {
+      setTimeout(() => {
+        this.$store.commit('SET_TOKEN', '');
+        this.$store.commit('SET_REFRESH_TOKEN', '');
+        this.$router.push('/');
+      }, 1000);
+    },
     changeDarkMode() {
       if (this.darkMode) {
         this.$vs.setTheme('light');
+        this.$store.commit('SET_THEME', 'light');
       } else {
         this.$vs.setTheme('dark');
+        this.$store.commit('SET_THEME', 'dark');
       }
-      // this.theme = localStorage.vsTheme;
     },
     searching: _.debounce(function () {
       const search = encodeURIComponent(this.search.trim());
-      this.$router.push({ path: '/search', query: { q: search } });
-    }, 1000),
+      this.$router.push(`/search/${search}`);
+    }, 1500),
   },
 };
 </script>

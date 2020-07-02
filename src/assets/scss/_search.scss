@@ -1,24 +1,20 @@
 .search {
 
- .search-song {
-
-  .title-search-song {
-   transition: margin-left 2ms;
-   display: inline-block;
+ .title-search {
+  transition: margin-left .5s;
+  display: inline-block;
+  i {
+   vertical-align: middle;
+  }
+  &:hover {
+   cursor: pointer;
+   margin-left: 10px;
+   color: rgba(var(--vs-danger), 1);
    i {
-    vertical-align: middle;
-   }
-   &:hover {
-    cursor: pointer;
-    margin-left: 10px;
     color: rgba(var(--vs-danger), 1);
-    i {
-     color: rgba(var(--vs-danger), 1);
-    }
    }
   }
  }
-
  .data-track-row {
   -webkit-align-items: center;
   -ms-flex-align: center;
@@ -47,12 +43,76 @@
 
   .track-title {
    padding-left: 1rem;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
   }
 
   .track-album {
    overflow: hidden;
    text-overflow: ellipsis;
    white-space: nowrap;
+  }
+ }
+}
+
+.picture {
+ position: relative;
+ width: 200px;
+ .img-thumbnail {
+  transition: opacity 3ms;
+  min-width: 200px;
+  min-height: 200px;
+  max-width: 200px;
+  max-height: 200px;
+ }
+ .no-picture {
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  background-color: rgba(var(--vs-gray-2), 1);
+
+  i {
+   font-size: 5.5rem;
+   margin: -0.25rem;
+   border-radius: 0.25rem;
+   padding: 55px;
+  }
+ }
+ .information {
+  text-align: left;
+  padding-top: .3rem;
+  .info-name, .info-more {
+   display: block;
+   font-weight: 600;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+  }
+  .info-more {
+   font-size: 15px;
+   font-weight: 300;
+  }
+ }
+ .action-btn {
+  position: absolute;
+ }
+ .button-play {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  i {
+   color: #fff;
+  }
+ }
+ &:hover {
+  .img-thumbnail {
+   opacity: .7;
+  }
+  .button-play {
+   opacity: 1;
   }
  }
 }

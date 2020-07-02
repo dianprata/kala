@@ -10,7 +10,19 @@
 const defaultLayout = 'default';
 
 export default {
+  watch: {
+    $route() {
+      if (this.theme === 'dark') {
+        this.$vs.setTheme('dark');
+      } else {
+        this.$vs.setTheme('light');
+      }
+    },
+  },
   computed: {
+    theme() {
+      return this.$store.state.theme;
+    },
     layout() {
       return `${this.$route.meta.layout || defaultLayout}-layout`;
     },

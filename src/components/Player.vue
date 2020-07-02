@@ -65,7 +65,7 @@
           <div class="slider-track">
             <input id="seekslider"
                    class="slider-track-input"
-                   :max="fullTime" min="0" step="1"
+                   :max="fullTime" min="0"
                    v-model.number="seekSlider"
                    @mousemove="setSeek"
                    @mousedown="seeking = setSeek"
@@ -157,6 +157,7 @@ export default {
       volumeTooltip: false,
       volume: 100,
       fullTime: 0,
+      stepTime: 0,
       repeat: false,
       shuffle: false,
     };
@@ -172,22 +173,25 @@ export default {
         ret += `${hrs}:${mins < 10 ? '0' : ''}`;
       }
 
-      ret += `${mins}:${secs < 10 ? '0' : ''}`;
+      ret += `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}`;
       ret += `${secs}`;
       return ret;
     },
   },
   watch: {
     nowPlaying() {
-      this.title = this.nowPlaying.title;
-      this.artist = this.nowPlaying.artist.name;
-      this.coverAlbum = this.nowPlaying.album.cover;
+      this.title = this.nowPlaying.name;
+      this.artist = this.nowPlaying.artists[0].name;
+      this.coverAlbum = this.nowPlaying.album.images
+        ? this.nowPlaying.album.images[1].url : this.nowPlaying.album.images[0].url;
       this.fullTime = this.durationFull;
     },
     currentTime() {
       this.seekSlider = this.currentTime;
+      const { audio } = this;
+      // repeat
       if (this.seekSlider === this.fullTime && this.repeat) {
-        this.audio.play();
+        audio.play();
         this.$store.commit('SET_PLAY', true);
       }
     },
@@ -211,16 +215,31 @@ export default {
   },
   methods: {
     setSeek() {
+      const { audio } = this;
       if (this.seeking) {
-        this.audio.currentTime = this.seekSlider;
+        audio.currentTime = this.seekSlider;
       }
     },
     setPlaying() {
-      if (this.audio.paused) {
-        this.audio.play();
+      const { audio } = this;
+      if (audio.paused) {
+        audio.play();
         this.$store.commit('SET_PLAY', true);
       } else {
-        this.audio.pause();
+        audio.pause();
+        this.$store.commit('SET_PLAY', false);
+      }
+    },
+    playPreview(data) {
+      const { audio } = this;
+      this.$store.commit('SET_NOW_PLAYING', data);
+      this.$store.commit('SET_ELEMENT', audio);
+      this.$store.commit('SET_DURATION_FULL', audio.duration);
+      if (audio.paused) {
+        audio.play();
+        this.$store.commit('SET_PLAY', true);
+      } else {
+        audio.pause();
         this.$store.commit('SET_PLAY', false);
       }
     },
@@ -233,7 +252,8 @@ export default {
       this.$store.commit('SET_SHUFFLE', this.shuffle);
     },
     setVolume() {
-      this.audio.volume = this.volume / 100;
+      const { audio } = this;
+      audio.volume = this.volume / 100;
     },
   },
 };
